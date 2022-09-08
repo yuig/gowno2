@@ -10,8 +10,9 @@ const aiX = 910
 const lineWidth =6;
 const lineHeight = 16;
 let playerY =  aiY = 200;
-let ballSpeedX = 1;
-let ballSpeedY =1;
+let ballSpeedX = -2;
+let ballSpeedY = -2;
+let score = [0,0]
 let ballX = cw/2 -ballSize/2;
 let ballY = ch/2- ballSize/2;
 topOffset = canvas.offsetTop;
@@ -45,6 +46,14 @@ function drawTable(){
 		ctx.fillStyle="gray"
 		ctx.fillRect(cw/2-lineWidth/2,l,lineWidth,lineHeight)
 	}
+	ctx.font = "12px Arial";
+	ctx.fillText(score[0]+":"+score[1], cw/2, 50);
+}
+function reset(){
+	ballX = cw/2 -ballSize/2;
+	ballY = ch/2- ballSize/2;
+	ballSpeedX = 2;
+	ballSpeedY = -2;
 }
 
 function drawBall(){
@@ -56,10 +65,32 @@ function drawBall(){
 		ballSpeedY = -ballSpeedY
 		speedUp()
 	}
-	if(ballX<=0 || ballX +ballSize>cw){
-		ballSpeedX = -ballSpeedX
-		speedUp()
+	if(ballX<=0){
+		score[1] ++
+		reset()
+	}else if(ballX +ballSize>cw) {
+		reset()
+		score[0]++
 	}
+	if(ballX + ballSize >= playerX){
+		
+	}
+	if (
+		ballX < playerX + paddlewidth &&
+		ballX + ballSize > playerX &&
+		ballY < playerY + paddleHeight &&
+		ballSize + ballY > playerY
+	  ){
+		ballSpeedX = -ballSpeedX;
+	  }
+	  if (
+		ballX < aiX + paddlewidth &&
+		ballX + ballSize > aiX &&
+		ballY < aiY + paddleHeight &&
+		ballSize + ballY > aiY
+	  ) {
+		ballSpeedX = -ballSpeedX;
+	  }
 	
 }
 
@@ -68,16 +99,16 @@ function aiPosition(){
 	const middleBall = ballY + ballSize /2;
 	if(ballX>500){
 		if(middlePaddle-middleBall>200){
-			aiY -=24;
+			aiY -=34;
 			
 		}else if(middlePaddle-middleBall>50){
-			aiY -=10;
+			aiY -=5;
 		}
 		else if(middlePaddle-middleBall<-200){
-			aiY +=24;
+			aiY +=34;
 		}
-		else if(middlePaddle-middleBall<-50){
-			aiY += 10;
+		else if(middlePaddle-10-middleBall<-50){
+			aiY += 5;
 		}
 	}
 	if(ballX<= 500 && ballX>100){
@@ -92,6 +123,7 @@ function aiPosition(){
 	if(aiY <= 0){
 		aiY = 0;
 	}
+
 }
 function drawPlayer(){
 	ctx.fillStyle = "#7fff00";
@@ -111,5 +143,5 @@ function game(){
 	
 	console.log(ballSpeedX+","+ballSpeedY);
 }
-setInterval(aiPosition,40);
+setInterval(aiPosition,0.01);
 setInterval(game,1000/60)
